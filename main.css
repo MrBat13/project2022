@@ -3,6 +3,10 @@ body {
     font-family: serif;
 }
 
+.dark-theme {
+
+}
+
 .navbar {
     overflow: hidden;
     background-color: lightblue;
