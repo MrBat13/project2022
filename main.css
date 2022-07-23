@@ -3,3 +3,9 @@ body {
     color: black;
     font-family: serif;
 }
+
+#network {
+    width: 600px;
+    height: 400px;
+    border: 1px black;
+}
