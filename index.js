@@ -16,7 +16,7 @@ const createMatrixModel = () => {
     }
     return model;
 }
-//я хотел сделать так, если в матрице элемент равен 0, значит нет ячейки => нет соседей, нет веса. но мой код
+
 const convertMatrixModelToGraph = (model) => {
     const graph = [];
     const count = parseInt(elNodesCount.value);
