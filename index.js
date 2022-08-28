@@ -24,7 +24,7 @@ const convertMatrixModelToGraph = (model) => {
         graph[x] = [];
         for (let y = 0; y < count; y++) {
             if (model[x][y] !== 0) {
-                graph[x][y] = {id:`Node${y}`, neighbour: `Node${x}`, weight: model[x][y]};
+                graph[x][y] = {id:`${y}`, neighbour: `${x}`, weight: model[x][y]};
             }
             if (model[x][y] === '0' || model[x][y] === ''){
                 graph[x][y] = '';
@@ -37,19 +37,31 @@ const convertMatrixModelToGraph = (model) => {
 const renderGraph = (graph) => {
     const ctx = elGraph.getContext('2d');
     ctx.canvas.width = window.innerWidth;
-    ctx.canvas.height = window.innerHeight;
+    ctx.canvas.height = window.innerHeight-200;
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
     const radius = 15;
     const nodes = [];
+    //Отрисовка узла
     for (let x = 0; x < graph.length; x++) {
-        let posX = Math.random() * (ctx.canvas.width - 100) + 100;
-        let posY = Math.random() * (ctx.canvas.height - 100) + 100;
-        nodes[x] = {posX, posY};
+        let X = Math.random() * (ctx.canvas.width);
+        let Y = Math.random() * (ctx.canvas.height);
+        nodes[x] = {posX: `${X}`, posY: `${Y}`};
         ctx.beginPath();
-        ctx.arc(posX, posY, radius, 0, Math.PI * 2, false);
+        ctx.arc(X, Y, radius, 0, Math.PI * 2, false);
+        ctx.fillText(`${x}`,X, Y);
         ctx.stroke();
     }
-
+    //Отрисовка ребра
+    for (let x = 0; x < graph.length; x++) {
+        for (let y = 0; y < graph.length; y++){
+            if (graph[x][y] !== '' && graph[x][y].weight !== '0'){
+                ctx.beginPath()
+                ctx.moveTo(nodes[y].posX, nodes[y].posY)
+                ctx.lineTo(nodes[x].posX, nodes[x].posY)
+                ctx.stroke();
+            }
+        }
+    }
     /*    const cnt = graph.length
         const step = 360.0 / cnt * Math.PI / 180
 
