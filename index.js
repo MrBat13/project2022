@@ -2,7 +2,7 @@ const elApply = document.querySelector('#btnApply')
 const elNodesCount = document.querySelector('#tbNodesCount')
 const elMatrix = document.querySelector('#divMatrix')
 const elGraph = document.querySelector('#canvasGraph')
-
+const elShow = document.querySelector('#btnShow')
 
 const createMatrixModel = () => {
     const count = parseInt(elNodesCount.value);
@@ -24,47 +24,51 @@ const convertMatrixModelToGraph = (model) => {
         graph[x] = [];
         for (let y = 0; y < count; y++) {
             if (model[x][y] !== 0) {
-                graph[x][y] = {to: `Node${x}`, weight: model[x][y]};
+                graph[x][y] = {id:`Node${y}`, neighbour: `Node${x}`, weight: model[x][y]};
             }
             if (model[x][y] === '0' || model[x][y] === ''){
-                graph[x][y] = ''
+                graph[x][y] = '';
             }
         }
     }
-    console.table(graph);
     return graph;
-
 }
 
 const renderGraph = (graph) => {
-    // отрисовка
     const ctx = elGraph.getContext('2d');
     ctx.canvas.width = window.innerWidth;
     ctx.canvas.height = window.innerHeight;
-    ctx.clearRect(0, 0, elGraph.width, elGraph.height)
-    const cnt = graph.length
-    const step = 360.0 / cnt * Math.PI / 180
-
-    let w = window.innerWidth;
-    let h = window.innerHeight;
-    const w2 = w / 2;
-    const h2 = h / 2;
-    const r = 100;
-
-    let i = 0
-    for (let node of graph) {
-
-        const x = Math.cos(i * step) * r
-        const y = Math.sin(i * step) * r
-
+    ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
+    const radius = 15;
+    const nodes = [];
+    for (let x = 0; x < graph.length; x++) {
+        let posX = Math.random() * (ctx.canvas.width - 100) + 100;
+        let posY = Math.random() * (ctx.canvas.height - 100) + 100;
+        nodes[x] = {posX, posY};
         ctx.beginPath();
-        ctx.ellipse(w2 + x, h2 + y, 50, 50, 0, 0, 2 * Math.PI);
-        ctx.fillText(`Node${i}`, w2 + x, h2 + y);
+        ctx.arc(posX, posY, radius, 0, Math.PI * 2, false);
         ctx.stroke();
-        i++
     }
 
+    /*    const cnt = graph.length
+        const step = 360.0 / cnt * Math.PI / 180
 
+        let w = window.innerWidth;
+        let h = window.innerHeight;
+        const w2 = w / 2;
+        const h2 = h / 2;
+        const r = 100;
+
+        let i = 0
+        for (let node of graph) {
+            const x = Math.cos(i * step) * r;
+            const y = Math.sin(i * step) * r;
+            ctx.beginPath();
+            ctx.ellipse(w2 + x, h2 + y, 50, 50, 0, 0, 2 * Math.PI);
+            ctx.fillText(`Node${i}`, w2 + x, h2 + y);
+            ctx.stroke();
+            i++;
+        }*/
 }
 
 
@@ -74,12 +78,14 @@ changeCell = () => {
     renderGraph(graph);
 }
 
+//window.addEventListener('resize', changeCell)
+
+elShow.addEventListener('click', changeCell)
 
 elApply.addEventListener('click', () => {
     let count = parseInt(elNodesCount.value)
     if (count < 2) {
         alert('Enter at least 2 nodes');
-
     }
 
     elMatrix.innerHTML = ''
@@ -96,7 +102,7 @@ elApply.addEventListener('click', () => {
             if (x === y) {
                 elCell.value = `0`;
             }
-            elCell.addEventListener('change', changeCell);
+            //elCell.addEventListener('change', changeCell);
             elRow.appendChild(elCell);
         }
     }
