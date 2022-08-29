@@ -4,40 +4,35 @@ const elMatrix = document.querySelector('#divMatrix')
 const elGraph = document.querySelector('#canvasGraph')
 const elShow = document.querySelector('#btnShow')
 
-const createMatrixModel = () => {
+const createGraph = () => {
     const count = parseInt(elNodesCount.value);
     const model = [];
-    for (let x = 0; x < count; x++){
+    for (let x = 0; x < count; x++) {
         model[x] = [];
-        for (let y = 0; y < count; y++){
-            let node = document.getElementById(x + '_' + y);
-            model[x][y] = node.value;
+        for (let y = 0; y < count; y++) {
+            let cell = document.getElementById(x + '_' + y);
+            model[x][y] = cell.value;
         }
     }
-    return model;
-}
-
-const convertMatrixModelToGraph = (model) => {
     const graph = [];
-    const count = parseInt(elNodesCount.value);
     for (let x = 0; x < count; x++) {
         graph[x] = [];
         for (let y = 0; y < count; y++) {
             if (model[x][y] !== 0) {
-                graph[x][y] = {id:`${y}`, neighbour: `${x}`, weight: model[x][y]};
+                graph[x][y] = {id: `${y}`, neighbour: `${x}`, weight: model[x][y]};
             }
-            if (model[x][y] === '0' || model[x][y] === ''){
+            if (model[x][y] === '0' || model[x][y] === '') {
                 graph[x][y] = '';
             }
         }
     }
-    return graph;
+    renderGraph(graph);
 }
 
 const renderGraph = (graph) => {
     const ctx = elGraph.getContext('2d');
     ctx.canvas.width = window.innerWidth;
-    ctx.canvas.height = window.innerHeight-200;
+    ctx.canvas.height = window.innerHeight - 200;
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
     const radius = 15;
     const nodes = [];
@@ -48,13 +43,13 @@ const renderGraph = (graph) => {
         nodes[x] = {posX: `${X}`, posY: `${Y}`};
         ctx.beginPath();
         ctx.arc(X, Y, radius, 0, Math.PI * 2, false);
-        ctx.fillText(`${x}`,X, Y);
+        ctx.fillText(`${x}`, X, Y);
         ctx.stroke();
     }
     //Отрисовка ребра
     for (let x = 0; x < graph.length; x++) {
-        for (let y = 0; y < graph.length; y++){
-            if (graph[x][y] !== '' && graph[x][y].weight !== '0'){
+        for (let y = 0; y < graph.length; y++) {
+            if (graph[x][y] !== '' && graph[x][y].weight !== '0') {
                 ctx.beginPath()
                 ctx.moveTo(nodes[y].posX, nodes[y].posY)
                 ctx.lineTo(nodes[x].posX, nodes[x].posY)
@@ -83,16 +78,7 @@ const renderGraph = (graph) => {
         }*/
 }
 
-
-changeCell = () => {
-    const matrixModel = createMatrixModel();
-    const graph = convertMatrixModelToGraph(matrixModel);
-    renderGraph(graph);
-}
-
-//window.addEventListener('resize', changeCell)
-
-elShow.addEventListener('click', changeCell)
+elShow.addEventListener('click', createGraph)
 
 elApply.addEventListener('click', () => {
     let count = parseInt(elNodesCount.value)
