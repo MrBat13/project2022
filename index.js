@@ -1,11 +1,26 @@
-const elApply = document.querySelector('#btnApply')
-const elNodesCount = document.querySelector('#tbNodesCount')
-const elMatrix = document.querySelector('#divMatrix')
-const elGraph = document.querySelector('#canvasGraph')
-const elShow = document.querySelector('#btnShow')
+import {dijkstra} from "./Algorithms/Dijkstra.js";
 
-const createGraph = () => {
-    const count = parseInt(elNodesCount.value);
+const elInput = document.getElementById('inputBox')
+const elCanvasTrigger = document.getElementById('showCanvas')
+const elMatrixTrigger = document.getElementById('showMatrix')
+const elCanvas = document.getElementById('canvas')
+const elMatrix = document.getElementById('divMatrix')
+const elAlgorithmTrigger = document.getElementById('showAlgorithm')
+const elInputStart = document.getElementById('inputStart')
+const elInputEnd= document.getElementById('inputEnd')
+
+
+export function numberToLetter (number) {
+    let letters = ''
+    while (number >= 0) {
+        letters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ'[number % 26] + letters
+        number = Math.floor(number / 26) - 1
+    }
+    return letters
+}
+
+function createArray() {
+    const count = parseInt(elInput.value);
     const model = [];
     for (let x = 0; x < count; x++) {
         model[x] = [];
@@ -14,30 +29,31 @@ const createGraph = () => {
             model[x][y] = cell.value;
         }
     }
-    const graph = [];
+    const array = [];
     for (let x = 0; x < count; x++) {
-        graph[x] = [];
+        array[x] = [];
         for (let y = 0; y < count; y++) {
             if (model[x][y] !== 0) {
-                graph[x][y] = {id: `${y}`, neighbour: `${x}`, weight: model[x][y]};
+                array[x][y] = {from: `${numberToLetter(x)}`, to: `${numberToLetter(y)}`, weight: model[x][y]};
             }
             if (model[x][y] === '0' || model[x][y] === '') {
-                graph[x][y] = '';
+                array[x][y] = '';
             }
+
         }
     }
-    renderGraph(graph);
+    return array;
 }
 
-const renderGraph = (graph) => {
-    const ctx = elGraph.getContext('2d');
+function renderCanvas(array) {
+    const ctx = elCanvas.getContext('2d');
     ctx.canvas.width = window.innerWidth;
     ctx.canvas.height = window.innerHeight - 200;
     ctx.clearRect(0, 0, ctx.canvas.width, ctx.canvas.height)
     const radius = 15;
     const nodes = [];
     //Отрисовка узла
-    for (let x = 0; x < graph.length; x++) {
+    for (let x = 0; x < array.length; x++) {
         let X = Math.random() * (ctx.canvas.width);
         let Y = Math.random() * (ctx.canvas.height);
         nodes[x] = {posX: `${X}`, posY: `${Y}`};
@@ -47,9 +63,9 @@ const renderGraph = (graph) => {
         ctx.stroke();
     }
     //Отрисовка ребра
-    for (let x = 0; x < graph.length; x++) {
-        for (let y = 0; y < graph.length; y++) {
-            if (graph[x][y] !== '' && graph[x][y].weight !== '0') {
+    for (let x = 0; x < array.length; x++) {
+        for (let y = 0; y < array.length; y++) {
+            if (array[x][y] !== '' && array[x][y].weight !== '0') {
                 ctx.beginPath()
                 ctx.moveTo(nodes[y].posX, nodes[y].posY)
                 ctx.lineTo(nodes[x].posX, nodes[x].posY)
@@ -57,51 +73,48 @@ const renderGraph = (graph) => {
             }
         }
     }
-    /*    const cnt = graph.length
-        const step = 360.0 / cnt * Math.PI / 180
 
-        let w = window.innerWidth;
-        let h = window.innerHeight;
-        const w2 = w / 2;
-        const h2 = h / 2;
-        const r = 100;
-
-        let i = 0
-        for (let node of graph) {
-            const x = Math.cos(i * step) * r;
-            const y = Math.sin(i * step) * r;
-            ctx.beginPath();
-            ctx.ellipse(w2 + x, h2 + y, 50, 50, 0, 0, 2 * Math.PI);
-            ctx.fillText(`Node${i}`, w2 + x, h2 + y);
-            ctx.stroke();
-            i++;
-        }*/
 }
 
-elShow.addEventListener('click', createGraph)
-
-elApply.addEventListener('click', () => {
-    let count = parseInt(elNodesCount.value)
+function renderMatrix() {
+    let count = parseInt(elInput.value)
     if (count < 2) {
         alert('Enter at least 2 nodes');
     }
-
-    elMatrix.innerHTML = ''
-    for (let x = 0; x < count; x++) {
-        const elRow = document.createElement('div')
-        elMatrix.appendChild(elRow);
-        // TODO - добавить span
-        elRow.insertAdjacentHTML('beforeend', `<span> Node ${x}</span>`)
-
-        for (let y = 0; y < count; y++) {
-            const elCell = document.createElement('input');
-            elCell.type = 'text';
-            elCell.id = x + '_' + y;
-            if (x === y) {
-                elCell.value = `0`;
+    if (count >= 2) {
+        elMatrix.innerHTML = ''
+        for (let x = 0; x < count; x++) {
+            const elRow = document.createElement('div')
+            elMatrix.appendChild(elRow);
+            // TODO - добавить span
+            elRow.insertAdjacentHTML('beforeend', `<span> ${numberToLetter(x)} </span>`)
+            // y <= x вывод "лестницей"
+            for (let y = 0; y < count; y++) {
+                const elCell = document.createElement('input');
+                elCell.type = 'text';
+                elCell.id = x + '_' + y;
+                if (x === y) {
+                    elCell.value = `0`;
+                }
+                //elCell.addEventListener('change', changeCell);
+                elRow.appendChild(elCell);
             }
-            //elCell.addEventListener('change', changeCell);
-            elRow.appendChild(elCell);
         }
     }
-})
+}
+
+const dijkstraTrigger = () => {
+    let array = createArray();
+    let result = dijkstra(array, elInputStart, elInputEnd);
+}
+
+const canvasTrigger = () => {
+    let array = createArray();
+    renderCanvas(array);
+}
+
+elInput.addEventListener('change', renderMatrix)
+elMatrixTrigger.addEventListener('click', renderMatrix)
+elCanvasTrigger.addEventListener('click', canvasTrigger)
+elAlgorithmTrigger.addEventListener('click', dijkstraTrigger)
+
