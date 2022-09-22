@@ -1,12 +1,10 @@
-import {dijkstra} from "./Algorithms/Dijkstra.js";
-import {render} from "./Algorithms/visualization.js";
+import {dijkstra, randomMatrix} from "./Algorithms/Dijkstra.js";
+import {init} from "./Algorithms/visualization.js";
 
-const elInput = document.getElementById('inputBox')
 const elCanvasTrigger = document.getElementById('showCanvas')
 const elAlgorithmTrigger = document.getElementById('showAlgorithm')
 const elInputStart = document.getElementById('inputStart')
 const elInputEnd= document.getElementById('inputEnd')
-
 
 export function numberToLetter (number) {
     let letters = ''
@@ -16,6 +14,8 @@ export function numberToLetter (number) {
     }
     return letters
 }
+
+/*
 
 function createArray() {
     const count = parseInt(elInput.value);
@@ -42,14 +42,15 @@ function createArray() {
     }
     return array;
 }
+*/
 
 function dijkstraTrigger(){
     dijkstra(elInputStart.value, elInputEnd.value);
-
 }
 
 function canvasTrigger(){
-    render();
+    //let array = randomMatrix();
+    init();
 }
 
 elCanvasTrigger.addEventListener('click', canvasTrigger)

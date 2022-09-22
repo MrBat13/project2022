@@ -1,11 +1,11 @@
 import {numberToLetter} from "../index.js";
+
 /*
 array[x] = [{...},{from: '', to: '', weight: ''}, {...}]
  */
-const elInput = document.getElementById('inputBox')
-const V = elInput.value;
+const V = document.getElementById('inputBox').value;
 
-function randomMatrix() {
+export function randomMatrix() {
     // A B C D E F G H I
     // 0 1 2 3 4 5 6 7 8
 
@@ -16,7 +16,7 @@ function randomMatrix() {
             if (x === y) {
                 array[x][y] = 0;
             } else {
-                array[x][y] = {from: numberToLetter(x), to: numberToLetter(y), weight: Math.floor(Math.random() * 21)}
+                array[x][y] = {from: numberToLetter(y), to: numberToLetter(x), weight: Math.floor(Math.random() * 21)}
                 array[y][x] = array[x][y];
             }
         }
@@ -74,5 +74,5 @@ export function dijkstra(src, dest) {
         }
     }
     // Print the constructed distance array
-    //printSolution(dist, src, dest);
+    printSolution(dist, src, dest);
 }
